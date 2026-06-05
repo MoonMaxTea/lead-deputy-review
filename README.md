@@ -4,6 +4,10 @@
 
 **中文说明** → [README.zh-CN.md](README.zh-CN.md)
 
+### Repository description (GitHub About)
+
+> Agent-agnostic Skill for **Lead + Deputy** dual review: Preflight terminal-bridge MCP, structured plan adoption, implementation handoffs, and acceptance reports—works with any dialogue agent and TTY CLI deputy.
+
 ---
 
 ## Why this exists
@@ -39,8 +43,8 @@ Install a **terminal bridge** (recommended: [Terminal Automatization](https://ma
 Clone into your host’s **personal skills directory** (see your agent documentation for the exact path):
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/lead-deputy-review.git
-# then copy or symlink into your skills folder as lead-deputy-review/
+git clone https://github.com/<your-account>/lead-deputy-review.git
+# copy or symlink into your host personal skills folder as lead-deputy-review/
 ```
 
 ## Quick start

@@ -39,7 +39,7 @@
 克隆到宿主文档中的**个人 skills 目录**：
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/lead-deputy-review.git
+git clone https://github.com/<your-account>/lead-deputy-review.git
 # 复制或软链为 lead-deputy-review/
 ```
 
