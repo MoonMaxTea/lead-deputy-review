@@ -1,27 +1,27 @@
-# lead-deputy-review
+# superpowers-dual-agent-collab
 
-> **Ship with a second pair of eyes.** An agent-agnostic Skill that pairs a **Lead** (whoever loads it) with a **Deputy** (a TTY CLI in your editor’s integrated terminal)—orchestrated through terminal-bridge MCP, structured plan review, and acceptance reports.
+> **Ship with a second pair of eyes — Superpowers optional.** An agent-agnostic Skill for **dual-agent collaboration**: **Lead** (dialogue Agent) + **Deputy** (TTY CLI in the integrated terminal), orchestrated through terminal-bridge MCP, structured plan review, and acceptance reports.
 
 **中文说明** → [README.zh-CN.md](README.zh-CN.md)
 
 ### Repository description (GitHub About)
 
-> Agent-agnostic Skill for **Lead + Deputy** dual review: Preflight terminal-bridge MCP, structured plan adoption, implementation handoffs, and acceptance reports—works with any dialogue agent and TTY CLI deputy.
+> Superpowers-enhanced dual-agent collab: Lead + Deputy via MCP terminal bridge. Preflight, optional Superpowers overlay, plan adoption, acceptance templates.
 
 ---
 
 ## Why this exists
 
-One agent can move fast; two roles catch what one misses. This Skill defines a repeatable **Lead + Deputy** workflow:
+One agent can move fast; two roles catch what one misses. This Skill defines a repeatable **Lead + Deputy** collaboration workflow:
 
 - **Preflight** — verify terminal-bridge MCP before any handoff  
+- **Superpowers optional** — User chooses each session: overlay brainstorming / writing-plans / executing-plans / verification, or classic dual-agent flow only  
 - **Plan review** — Deputy critiques; Lead publishes adoption decisions; you confirm  
 - **Flexible implementation** — you choose Lead or Deputy as the primary coder  
 - **Acceptance** — static/HTTP checks in tables; UI steps flagged for manual testing  
 - **No copy-paste** — when the bridge is configured, Lead dispatches tasks directly into Deputy’s terminal  
 - **Enter to submit** — Lead always sends `\r` after handoff text so Deputy receives the task  
 - **Activity watch** — Lead polls Deputy terminal at User-chosen intervals (default 1/5/10/30 min) while Deputy works  
-- **Superpowers optional** — User chooses each session: overlay brainstorming / writing-plans / executing-plans / verification, or classic lead-deputy only  
 
 Works across **any host** that supports Agent Skills and MCP terminal control—not tied to a single vendor.
 
@@ -39,6 +39,8 @@ The same host application can play **Lead** (dialogue + MCP) or **Deputy** (term
 
 Install a **terminal bridge** (recommended: [Terminal Automatization](https://marketplace.visualstudio.com/items?itemName=davidrsch.terminal-automatization)). Alternatives: Arc Terminal Bridge, vscode-terminal-mcp, mcp-interactive-terminal.
 
+Optional: [Superpowers](https://github.com/obra/superpowers) plugin in Cursor (`/plugin-add superpowers`).
+
 → Full setup: [setup-reference.md](setup-reference.md)
 
 ## Install
@@ -46,8 +48,8 @@ Install a **terminal bridge** (recommended: [Terminal Automatization](https://ma
 Clone into your host’s **personal skills directory** (see your agent documentation for the exact path):
 
 ```bash
-git clone https://github.com/<your-account>/lead-deputy-review.git
-# copy or symlink into your host personal skills folder as lead-deputy-review/
+git clone https://github.com/MoonMaxTea/superpowers-dual-agent-collab.git
+# copy or symlink into your host personal skills folder as superpowers-dual-agent-collab/
 ```
 
 ## Quick start
@@ -57,7 +59,7 @@ git clone https://github.com/<your-account>/lead-deputy-review.git
 3. In a new agent chat:
 
    ```text
-   Use lead-deputy-review skill. Run Preflight, then review docs/plans/my-feature.md
+   Use superpowers-dual-agent-collab skill. Run Preflight, then review docs/plans/my-feature.md
    ```
 
 4. Expect: Preflight report → **Superpowers on/off?** → questions (implementation lead + Deputy `start_command`) → phases A–C.
@@ -73,7 +75,7 @@ Preflight → Session init → Plan review (A) → Implement (B) → Accept (C) 
 ## Repository layout
 
 ```
-lead-deputy-review/
+superpowers-dual-agent-collab/
 ├── README.md / README.zh-CN.md
 ├── SKILL.md                 # Agent instructions
 ├── setup-reference.md       # Bridge install & troubleshooting
@@ -87,8 +89,8 @@ lead-deputy-review/
 
 ## Invocation
 
-- Skill id: `lead-deputy-review`
-- Mention it explicitly (`disable-model-invocation: true`) or use triggers: *dual-agent*, *deputy*, *Preflight*, *副手*
+- Skill id: `superpowers-dual-agent-collab`
+- Mention it explicitly (`disable-model-invocation: true`) or use triggers: *superpowers-dual-agent*, *dual-agent-collab*, *deputy*, *Preflight*, *副手*
 
 ## License
 

@@ -9,7 +9,7 @@ When `superpowers_mode: on`, Lead **layers** Superpowers process skills onto the
 
 ## Phase mapping
 
-| Lead-Deputy phase | Superpowers skill(s) | Who runs | Notes |
+| Dual-agent collab phase | Superpowers skill(s) | Who runs | Notes |
 |-------------------|----------------------|----------|-------|
 | A — Plan (draft) | `brainstorming` → `writing-plans` | Lead | Skip brainstorming if User already has an approved spec/plan path |
 | A — Plan (review) | *(none)* | Deputy | Unchanged: Deputy critiques; Lead writes 接纳建议 |
@@ -24,7 +24,7 @@ When `superpowers_mode: on`, Lead **layers** Superpowers process skills onto the
    - Explore context, clarify with User, propose approaches, get design approval
    - Optional design doc: `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
 2. **writing-plans** — draft plan using [templates/plan-skeleton.md](templates/plan-skeleton.md)
-   - Save to `docs/plans/<feature>.md` (lead-deputy canonical path; superpowers default `docs/superpowers/plans/` overridden here)
+   - Save to `docs/plans/<feature>.md` (this skill's canonical path; superpowers default `docs/superpowers/plans/` overridden here)
    - Include bite-sized tasks, file list, verification commands per writing-plans discipline
 3. Continue standard Phase A: MCP Deputy plan review → Lead 接纳建议 → User confirms
 
@@ -67,7 +67,7 @@ When `superpowers_mode: on`, Lead **layers** Superpowers process skills onto the
 When superpowers on, Lead announces at phase start:
 
 ```text
-[Lead-Deputy + Superpowers] Phase A — using writing-plans to draft plan
-[Lead-Deputy + Superpowers] Phase B — using executing-plans (implementation_lead: lead)
-[Lead-Deputy + Superpowers] Phase C — verification-before-completion before sign-off
+[Superpowers Dual-Agent Collab] Phase A — using writing-plans to draft plan
+[Superpowers Dual-Agent Collab] Phase B — using executing-plans (implementation_lead: lead)
+[Superpowers Dual-Agent Collab] Phase C — verification-before-completion before sign-off
 ```

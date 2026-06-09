@@ -1,16 +1,18 @@
 ---
-name: lead-deputy-review
+name: superpowers-dual-agent-collab
 description: >-
-  Orchestrates Lead Agent and terminal Deputy CLI dual review with Preflight
-  terminal-bridge MCP checks. Use when the user wants dual-agent review,
-  lead-deputy handoff, terminal MCP preflight, plan review with adoption
-  recommendations, TTY CLI acceptance by a secondary coding assistant, or
-  optional Superpowers plugin collaboration (brainstorming, writing-plans,
-  executing-plans, verification).
+  Superpowers-enhanced dual-agent collaboration: Lead (dialogue Agent) orchestrates
+  terminal Deputy (TTY CLI) via MCP handoff for plan co-review, implementation,
+  and acceptance. Use when the user wants superpowers-dual-agent-collab,
+  dual-agent collab, lead-deputy handoff, terminal MCP preflight, optional
+  Superpowers overlay (brainstorming, writing-plans, executing-plans,
+  verification), or classic Lead + Deputy flow without Superpowers.
 disable-model-invocation: true
 ---
 
-# Lead + Deputy Collaboration
+# Superpowers Dual-Agent Collab
+
+Lead + Deputy collaboration workflow (Superpowers optional overlay).
 
 Agent-agnostic workflow: **whoever loads this Skill is Lead**. Deputy is a **TTY CLI in the host's integrated terminal**. Plan authoring is always Lead. Implementation lead is chosen by User.
 
@@ -42,7 +44,7 @@ Full install, dual-role (dialogue vs terminal CLI) notes, and fallbacks: [setup-
 
 Ask User (use AskQuestion when available):
 
-1. **Superpowers 协作** (ask **every session** when User invokes lead-deputy): `on` | `off`
+1. **Superpowers 协作** (ask **every session** when User invokes this skill): `on` | `off`
    - Explain briefly: `on` = Lead 叠加 Superpowers 流程技能（brainstorming / writing-plans / executing-plans / verification 等）；`off` = 仅本 Skill 原流程，不调用 Superpowers
    - If User already stated preference this message, still confirm unless they said "always on/off for this project"
 2. **Implementation lead**: `lead` (default) | `deputy`
@@ -199,7 +201,7 @@ If `terminal_bridge: manual`, Lead cannot poll terminal files — ask User at ea
 - Skipping Preflight then blaming "Deputy no response"
 - Sending handoff text without **Enter/submit** (`\r` second step)
 - Dispatching to Deputy then going idle without **activity watch**
-- Skipping **Superpowers 协作** ask when User invokes lead-deputy
+- Skipping **Superpowers 协作** ask when User invokes superpowers-dual-agent-collab
 - Enabling Superpowers (`on`) when User chose `off`, or skipping Superpowers when User chose `on`
 - Replacing Deputy plan review with Superpowers code-review only (Deputy review stays in Phase A)
 
