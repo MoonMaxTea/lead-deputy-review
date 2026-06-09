@@ -1,6 +1,6 @@
 # Lead → Deputy Handoff Templates
 
-Lead sends via terminal-bridge MCP (`focus_terminal` → `send_text_to_terminal`). Use two-step Enter for TUIs: message with `execute: false`, then `"\r"`.
+Lead sends via terminal-bridge MCP (`focus_terminal` → `send_text_to_terminal` → **Enter submit**). **Always** use two-step send: message with `execute: false`, then `"\r"` with `execute: false`. Skipping Enter leaves text in the input buffer — Deputy never receives the task.
 
 Placeholders: `{PLAN_PATH}` `{VERSION}` `{CHANGED_FILES}` `{CHECKLIST_REF}` `{IMPLEMENTATION_LEAD}` `{DEPUTY_NAME}`
 

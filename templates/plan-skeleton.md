@@ -17,6 +17,18 @@
 
 `plan_author` 固定为 **Lead**，不随实施主切换。
 
+## Deputy 监测配置
+
+> Phase 0 / Plan 起草时由 Lead 询问 User 确认；Deputy 工作期间 Lead 按此间隔轮询终端。
+
+| 项 | 配置 |
+|----|------|
+| 启用监测 | `{DEPUTY_WATCH_ENABLED}`（默认 true） |
+| 检查间隔（分钟） | `{DEPUTY_WATCH_INTERVALS}`（默认 `1, 5, 10, 30`） |
+| 无进展时 | `{ON_STALL}`（默认 notify_user — 向 User 汇报停滞） |
+
+Lead 职责：每次 MCP 下发任务并**回车提交**后启动监测；每个间隔读取 Deputy 终端快照，有变化则简报，完成则停止。
+
 ## 概述
 
 {ONE_PARAGRAPH_GOAL}

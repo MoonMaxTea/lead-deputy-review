@@ -19,6 +19,8 @@ One agent can move fast; two roles catch what one misses. This Skill defines a r
 - **Flexible implementation** — you choose Lead or Deputy as the primary coder  
 - **Acceptance** — static/HTTP checks in tables; UI steps flagged for manual testing  
 - **No copy-paste** — when the bridge is configured, Lead dispatches tasks directly into Deputy’s terminal  
+- **Enter to submit** — Lead always sends `\r` after handoff text so Deputy receives the task  
+- **Activity watch** — Lead polls Deputy terminal at User-chosen intervals (default 1/5/10/30 min) while Deputy works  
 
 Works across **any host** that supports Agent Skills and MCP terminal control—not tied to a single vendor.
 

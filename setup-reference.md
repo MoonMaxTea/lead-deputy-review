@@ -82,23 +82,31 @@ Use port `0` for auto-pick; then read status bar and sync the URL in mcp.json.
 1. Read tool schema from MCP descriptors
 2. `list_terminals` — match Deputy by terminal title or known `start_command` shell
 3. `focus_terminal` — target index or name
-4. `send_text_to_terminal` — handoff body
-5. For TUI apps: second send with `"\r"` if first did not submit
+4. `send_text_to_terminal` — handoff body (`execute: false`)
+5. **Mandatory Enter** — separate `send_text_to_terminal { text: "\r", execute: false }` to submit; **never skip step 5**
 
-### Two-step Enter (interactive TUIs)
+### Two-step Enter (interactive TUIs) — required
 
-`execute: true` alone often fails on interactive TUIs.
+Typing the message alone does **not** send it to Deputy. Lead must always complete both steps:
 
 ```
 Step 1: send_text_to_terminal { text: "<full message>", execute: false }
-Step 2: send_text_to_terminal { text: "\r", execute: false }
+Step 2: send_text_to_terminal { text: "\r", execute: false }   ← Enter/submit; REQUIRED
 ```
+
+`execute: true` alone often fails on interactive TUIs — do not use it as a substitute for Step 2.
+
+After Step 2, Lead confirms to User: "已向 Deputy 发送并回车提交".
 
 ### Receiving Deputy output
 
 - Read host terminal snapshot files (if your environment exposes them)
 - Or ask User: "看副手回复" / paste output
 - No automatic push subscription — Lead must poll or User relay
+
+### Deputy activity watch (while Deputy works)
+
+After Enter-submitting a handoff, Lead polls Deputy terminal at User-configured intervals (default: 1, 5, 10, 30 minutes). At each check: read terminal snapshot, compare to last state, report progress or stall to User. Stop when Deputy completes. See SKILL.md § Deputy activity watch.
 
 ### Forbidden
 
@@ -131,7 +139,9 @@ When User will not install a bridge yet:
 |---------|-----|
 | MCP not connected | Reload window; restart Terminal MCP server |
 | Wrong port | Match `terminalMcp.port` with mcp.json URL |
-| Deputy silent | `focus_terminal` first; two-step `\r`; shorten message |
+| Deputy silent | `focus_terminal` first; **mandatory two-step Enter (`\r`)**; shorten message |
+| Message stuck in input, not sent | Lead forgot Step 2 Enter — resend with `\r` submit |
+| Lead idle, Deputy still working | Enable **Deputy activity watch** at 1/5/10/30m intervals |
 | Extension unavailable in marketplace | Try Terminal Automatization; Arc may need manual VSIX |
 | `run_command` empty | Enable shell integration on supported editors (1.93+) |
 | Lead and Deputy same terminal | Wrong topology — Deputy must be separate TTY CLI session |

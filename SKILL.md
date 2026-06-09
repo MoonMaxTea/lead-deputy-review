@@ -42,6 +42,7 @@ Ask User (use AskQuestion when available):
 
 1. **Implementation lead**: `lead` (default) | `deputy`
 2. **Deputy identity**: display name + `start_command` (User's chosen CLI entrypoint)
+3. **Deputy activity watch** (ask again during Phase A plan draft if not set): which check intervals to use while Deputy is working — default preset `1m, 5m, 10m, 30m`; User may pick a subset or custom intervals
 
 Write into plan roster and Project Config below. **`plan_author` is always `lead`** — does not change when implementation lead is deputy.
 
@@ -70,6 +71,10 @@ deputy:
   requires_tty: true
 implementation_lead: lead   # lead | deputy
 plan_author: lead             # fixed
+deputy_watch:
+  enabled: true
+  intervals_minutes: [1, 5, 10, 30]   # User-confirmed; subset or custom OK
+  on_stall: notify_user               # notify_user | reprompt_deputy | escalate
 plans_dir: docs/plans
 lead_handoff_fields:
   - version_or_build_id
@@ -82,8 +87,8 @@ lead_handoff_fields:
 
 ### Phase A — Plan review
 
-1. Lead drafts plan from [templates/plan-skeleton.md](templates/plan-skeleton.md) or aligns existing `docs/plans/*.md`
-2. MCP send **Plan review** variant from [templates/handoff-lead-to-deputy.md](templates/handoff-lead-to-deputy.md)
+1. Lead drafts plan from [templates/plan-skeleton.md](templates/plan-skeleton.md) or aligns existing `docs/plans/*.md` — include **Deputy 监测配置** (intervals from Phase 0 or ask User now)
+2. MCP send **Plan review** variant from [templates/handoff-lead-to-deputy.md](templates/handoff-lead-to-deputy.md); **must press Enter to submit** (see MCP protocol)
 3. Deputy **reviews only** — no plan edits; returns table: `项 | 建议 | 严重程度`
 4. Lead **second review**: fill plan section **审阅结论 / 接纳建议** — each Deputy item: **采纳 / 部分采纳 / 不采纳** + reason
 5. **User confirms** plan → then Phase B
@@ -114,11 +119,48 @@ Acceptance findings → implementer fixes → update handoff → optional re-acc
 
 1. Read MCP tool schema before `CallMcpTool`
 2. `list_terminals` → match Deputy by name/`start_command` → `focus_terminal` → `send_text_to_terminal`
-3. **TUI submit**: prefer `text` + `execute: false`, then separate `text: "\r"` + `execute: false` (not `execute: true` alone)
+3. **Mandatory Enter after every handoff** — typing alone does not dispatch. After the full message:
+   - Step A: `send_text_to_terminal { text: "<full message>", execute: false }`
+   - Step B: `send_text_to_terminal { text: "\r", execute: false }` — **this is the Enter/submit step; never skip**
+   - Do **not** rely on `execute: true` alone for interactive TUIs
+   - Confirm in chat: "已向 Deputy 发送并回车提交"
 4. **Receive**: read host terminal snapshot files or User says "看副手回复"
 5. **Never** start Deputy CLI in Agent non-TTY sub-shell (non-interactive pipe flags)
 
 Details: [setup-reference.md](setup-reference.md).
+
+## Deputy activity watch (Lead only)
+
+While Deputy is working (plan review, implementation, or acceptance), Lead **must stay on watch** — do not go idle or declare done until Deputy finishes or User stops the watch.
+
+### When to start
+
+Start the watch immediately after Enter-submitting a handoff to Deputy. Applies to Phase A, B (when `implementation_lead: deputy`), and C (when Deputy is acceptor).
+
+### Intervals
+
+Use `deputy_watch.intervals_minutes` from Project Config / plan. Default preset: **1, 5, 10, 30** minutes from handoff time.
+
+| Elapsed since handoff | Lead action |
+|-----------------------|-------------|
+| Each configured interval | Read Deputy terminal snapshot (or `list_terminals` + terminal file); note last output line, spinner/prompt state, errors |
+| Output changed since last check | Log one-line progress to User; reset stall counter |
+| No change across 2 consecutive checks | Report stall to User; apply `on_stall` (default: notify User with last seen state) |
+| Deputy reports complete | Stop watch; proceed to next phase |
+
+### Watch log (brief, to User)
+
+At each check, report only when meaningful:
+
+```text
+[Deputy watch +5m] 进行中 — 最后输出: "<snippet>" / 状态: running|idle|error|done
+```
+
+On completion: `[Deputy watch] 完成 — 进入 Lead 处理`.
+
+### Manual mode
+
+If `terminal_bridge: manual`, Lead cannot poll terminal files — ask User at each interval: "Deputy 终端有新输出吗？" or User pastes snapshot.
 
 ## After Deputy report
 
@@ -136,6 +178,8 @@ Details: [setup-reference.md](setup-reference.md).
 - Skipping User choice of `implementation_lead`
 - Lead secretly editing while `implementation_lead: deputy`
 - Skipping Preflight then blaming "Deputy no response"
+- Sending handoff text without **Enter/submit** (`\r` second step)
+- Dispatching to Deputy then going idle without **activity watch**
 
 ## Templates
 
