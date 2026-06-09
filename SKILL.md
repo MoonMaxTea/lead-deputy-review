@@ -4,7 +4,9 @@ description: >-
   Orchestrates Lead Agent and terminal Deputy CLI dual review with Preflight
   terminal-bridge MCP checks. Use when the user wants dual-agent review,
   lead-deputy handoff, terminal MCP preflight, plan review with adoption
-  recommendations, or TTY CLI acceptance by a secondary coding assistant.
+  recommendations, TTY CLI acceptance by a secondary coding assistant, or
+  optional Superpowers plugin collaboration (brainstorming, writing-plans,
+  executing-plans, verification).
 disable-model-invocation: true
 ---
 
@@ -40,11 +42,16 @@ Full install, dual-role (dialogue vs terminal CLI) notes, and fallbacks: [setup-
 
 Ask User (use AskQuestion when available):
 
-1. **Implementation lead**: `lead` (default) | `deputy`
-2. **Deputy identity**: display name + `start_command` (User's chosen CLI entrypoint)
-3. **Deputy activity watch** (ask again during Phase A plan draft if not set): which check intervals to use while Deputy is working — default preset `1m, 5m, 10m, 30m`; User may pick a subset or custom intervals
+1. **Superpowers 协作** (ask **every session** when User invokes lead-deputy): `on` | `off`
+   - Explain briefly: `on` = Lead 叠加 Superpowers 流程技能（brainstorming / writing-plans / executing-plans / verification 等）；`off` = 仅本 Skill 原流程，不调用 Superpowers
+   - If User already stated preference this message, still confirm unless they said "always on/off for this project"
+2. **Implementation lead**: `lead` (default) | `deputy`
+3. **Deputy identity**: display name + `start_command` (User's chosen CLI entrypoint)
+4. **Deputy activity watch** (ask again during Phase A plan draft if not set): which check intervals to use while Deputy is working — default preset `1m, 5m, 10m, 30m`; User may pick a subset or custom intervals
 
 Write into plan roster and Project Config below. **`plan_author` is always `lead`** — does not change when implementation lead is deputy.
+
+**Branch rule:** `superpowers_mode: off` → follow sections below only. `superpowers_mode: on` → same phases, plus [superpowers-integration.md](superpowers-integration.md).
 
 ## Roles
 
@@ -71,6 +78,7 @@ deputy:
   requires_tty: true
 implementation_lead: lead   # lead | deputy
 plan_author: lead             # fixed
+superpowers_mode: off           # on | off — User choice every session
 deputy_watch:
   enabled: true
   intervals_minutes: [1, 5, 10, 30]   # User-confirmed; subset or custom OK
@@ -85,15 +93,22 @@ lead_handoff_fields:
 
 ## Workflow phases
 
+> **`superpowers_mode: off`** — phases A–D below as written.
+> **`superpowers_mode: on`** — same phases; Lead additionally invokes Superpowers skills per [superpowers-integration.md](superpowers-integration.md). Deputy MCP handoffs, Enter submit, and activity watch unchanged.
+
 ### Phase A — Plan review
 
-1. Lead drafts plan from [templates/plan-skeleton.md](templates/plan-skeleton.md) or aligns existing `docs/plans/*.md` — include **Deputy 监测配置** (intervals from Phase 0 or ask User now)
+**Superpowers on (before step 1):** If no approved spec, Lead invokes `brainstorming` with User. Then invoke `writing-plans` discipline when drafting.
+
+1. Lead drafts plan from [templates/plan-skeleton.md](templates/plan-skeleton.md) or aligns existing `docs/plans/*.md` — include **Deputy 监测配置** and **Superpowers 协作** (intervals from Phase 0 or ask User now)
 2. MCP send **Plan review** variant from [templates/handoff-lead-to-deputy.md](templates/handoff-lead-to-deputy.md); **must press Enter to submit** (see MCP protocol)
 3. Deputy **reviews only** — no plan edits; returns table: `项 | 建议 | 严重程度`
 4. Lead **second review**: fill plan section **审阅结论 / 接纳建议** — each Deputy item: **采纳 / 部分采纳 / 不采纳** + reason
 5. **User confirms** plan → then Phase B
 
 ### Phase B — Implementation
+
+**Superpowers on:** `implementation_lead: lead` → `executing-plans` or `subagent-driven-development` + `test-driven-development` per task. `implementation_lead: deputy` → Lead uses `requesting-code-review` on Deputy diff after handoff complete.
 
 | `implementation_lead` | Implementer | Other party |
 |-----------------------|---------------|-------------|
@@ -104,6 +119,8 @@ Implementer completes handoff fields: `version_or_build_id`, `changed_files`, `r
 
 ### Phase C — Acceptance
 
+**Superpowers on:** Before any pass/complete claim, Lead invokes `verification-before-completion` (fresh command evidence). Deputy acceptance report still required when Deputy is acceptor.
+
 | `implementation_lead` | Acceptor | Output |
 |-----------------------|----------|--------|
 | `lead` | Deputy | [templates/acceptance-report.md](templates/acceptance-report.md) via MCP |
@@ -112,6 +129,8 @@ Implementer completes handoff fields: `version_or_build_id`, `changed_files`, `r
 Browser/UI items: always **待人工** with steps for User.
 
 ### Phase D — Fix loop
+
+**Superpowers on:** Invoke `systematic-debugging` before proposing fixes.
 
 Acceptance findings → implementer fixes → update handoff → optional re-acceptance. Lead records rejected suggestions in plan with rationale.
 
@@ -180,9 +199,13 @@ If `terminal_bridge: manual`, Lead cannot poll terminal files — ask User at ea
 - Skipping Preflight then blaming "Deputy no response"
 - Sending handoff text without **Enter/submit** (`\r` second step)
 - Dispatching to Deputy then going idle without **activity watch**
+- Skipping **Superpowers 协作** ask when User invokes lead-deputy
+- Enabling Superpowers (`on`) when User chose `off`, or skipping Superpowers when User chose `on`
+- Replacing Deputy plan review with Superpowers code-review only (Deputy review stays in Phase A)
 
 ## Templates
 
+- Superpowers overlay: [superpowers-integration.md](superpowers-integration.md)
 - Plan skeleton: [templates/plan-skeleton.md](templates/plan-skeleton.md)
 - Lead → Deputy handoffs: [templates/handoff-lead-to-deputy.md](templates/handoff-lead-to-deputy.md)
 - Deputy → Lead format: [templates/handoff-deputy-to-lead.md](templates/handoff-deputy-to-lead.md)

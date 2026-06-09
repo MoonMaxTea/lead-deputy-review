@@ -21,6 +21,7 @@ One agent can move fast; two roles catch what one misses. This Skill defines a r
 - **No copy-paste** — when the bridge is configured, Lead dispatches tasks directly into Deputy’s terminal  
 - **Enter to submit** — Lead always sends `\r` after handoff text so Deputy receives the task  
 - **Activity watch** — Lead polls Deputy terminal at User-chosen intervals (default 1/5/10/30 min) while Deputy works  
+- **Superpowers optional** — User chooses each session: overlay brainstorming / writing-plans / executing-plans / verification, or classic lead-deputy only  
 
 Works across **any host** that supports Agent Skills and MCP terminal control—not tied to a single vendor.
 
@@ -59,7 +60,7 @@ git clone https://github.com/<your-account>/lead-deputy-review.git
    Use lead-deputy-review skill. Run Preflight, then review docs/plans/my-feature.md
    ```
 
-4. Expect: Preflight report → questions (implementation lead + Deputy `start_command`) → phases A–C.
+4. Expect: Preflight report → **Superpowers on/off?** → questions (implementation lead + Deputy `start_command`) → phases A–C.
 
 ## Workflow
 
@@ -76,6 +77,7 @@ lead-deputy-review/
 ├── README.md / README.zh-CN.md
 ├── SKILL.md                 # Agent instructions
 ├── setup-reference.md       # Bridge install & troubleshooting
+├── superpowers-integration.md  # Optional Superpowers overlay
 └── templates/
     ├── plan-skeleton.md
     ├── handoff-lead-to-deputy.md

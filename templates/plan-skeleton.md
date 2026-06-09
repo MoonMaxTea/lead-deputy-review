@@ -3,6 +3,7 @@
 > 状态：草案 | 创建：{DATE}  
 > **分工**：Lead 起草 plan | Deputy 审阅 + 验收 | User 确认与 UI 验收  
 > **实施主**：`{IMPLEMENTATION_LEAD}`（lead | deputy）  
+> **Superpowers 协作**：`{SUPERPOWERS_MODE}`（on | off）  
 > **终端桥接**：`{TERMINAL_BRIDGE_STATUS}`（ok | missing | degraded | manual）  
 > 关联代码：{LINKED_PATHS}
 
@@ -28,6 +29,19 @@
 | 无进展时 | `{ON_STALL}`（默认 notify_user — 向 User 汇报停滞） |
 
 Lead 职责：每次 MCP 下发任务并**回车提交**后启动监测；每个间隔读取 Deputy 终端快照，有变化则简报，完成则停止。
+
+### Superpowers 协作（`superpowers_mode: on` 时填写）
+
+| 阶段 | Superpowers skill | 执行方 |
+|------|-------------------|--------|
+| Plan 起草 | brainstorming → writing-plans | Lead |
+| Plan 审阅 | — | Deputy（不变） |
+| 实施 (lead) | executing-plans / subagent-driven-development | Lead |
+| 实施 (deputy) | requesting-code-review | Lead 审 diff |
+| 验收 | verification-before-completion | Lead 举证 |
+| 修复 | systematic-debugging | 实施方 |
+
+`off` 时删除本节或标 N/A。详见 [superpowers-integration.md](../superpowers-integration.md)。
 
 ## 概述
 

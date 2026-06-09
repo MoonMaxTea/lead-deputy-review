@@ -17,6 +17,7 @@
 - **免手抄** — 桥接配好后，Lead 直接向 Deputy 终端下发任务  
 - **回车提交** — Lead 输入任务后必须按回车（`\r`）发出，否则 Deputy 收不到  
 - **活动监测** — Deputy 工作期间 Lead 按约定间隔（默认 1/5/10/30 分钟）轮询终端进度  
+- **Superpowers 可选** — 每次会话询问是否启用；`on` 叠加 brainstorming / writing-plans 等流程，`off` 走原 lead-deputy 流程  
 
 适用于支持 Agent Skill 与 MCP 终端控制的**任意宿主**，不绑定单一厂商。
 
@@ -55,7 +56,7 @@ git clone https://github.com/<your-account>/lead-deputy-review.git
    使用 lead-deputy-review skill，先 Preflight，再审阅 docs/plans/某功能.md
    ```
 
-4. 流程：Preflight 汇报 → 询问实施主与副手 → 阶段 A–C。
+4. 流程：Preflight 汇报 → **是否启用 Superpowers？** → 询问实施主与副手 → 阶段 A–C。
 
 ## 流程
 
@@ -72,6 +73,7 @@ lead-deputy-review/
 ├── README.md / README.zh-CN.md
 ├── SKILL.md
 ├── setup-reference.md
+├── superpowers-integration.md
 └── templates/
 ```
 
