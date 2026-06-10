@@ -6,18 +6,20 @@ Deputy outputs in terminal. Lead ingests via terminal snapshot or User relay.
 
 ## Plan review report (Phase A)
 
+When `superpowers_mode: on`, Deputy follows `{SKILLS_ROOT}/executing-plans/SKILL.md` Step 1 only before reporting.
+
 ```markdown
 ## Plan 审阅报告 — {FEATURE_TITLE}
 
-| 项 | 建议 | 严重程度 |
-|----|------|----------|
-| {ITEM} | {SUGGESTION} | high / med / low |
+| 项 | 建议 | 严重程度 | 待 Lead 澄清 |
+|----|------|----------|--------------|
+| {ITEM} | {SUGGESTION} | high / med / low | {CLARIFICATION_OR_—} |
 
 ### 总结
 {ONE_PARAGRAPH}
 ```
 
-Lead must map each row to **采纳 / 部分采纳 / 不采纳** in plan before User confirmation.
+Lead must map each row to **采纳 / 部分采纳 / 不采纳** in plan before User confirmation. Resolve「待 Lead 澄清」items in 审阅结论 section.
 
 ---
 

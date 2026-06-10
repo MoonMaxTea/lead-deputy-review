@@ -36,7 +36,7 @@ If bundle missing: run sync script or ask User to bootstrap before Phase B.
 | Phase | `implementation_lead: lead` | `implementation_lead: deputy` |
 |-------|----------------------------|------------------------------|
 | **A — Plan draft** | Lead: `brainstorming` → `writing-plans` (plugin) | Same |
-| **A — Plan review** | Deputy: critique only (no skill file) | Same |
+| **A — Plan review** | Deputy: **bundle** `executing-plans` Step 1 only (critical review, no implement) | Same |
 | **B — Implement** | Lead: `executing-plans` or `subagent-driven-development` (plugin) + per-task `test-driven-development` | Deputy: **bundle** `executing-plans` → TDD → `finishing-a-development-branch` |
 | **B — Post-impl review** | Deputy accepts next (Phase C) | Lead: `requesting-code-review` (plugin) on Deputy diff — **Lead only, not Deputy** |
 | **C — Acceptance** | Deputy: **bundle** `verification-before-completion` + [acceptance-report](templates/acceptance-report.md) | Lead: `verification-before-completion` (plugin) triage + User summary |
@@ -56,7 +56,8 @@ Lead **must not** send plan path alone when `superpowers_mode: on`. Use template
 
 | Variant | When | Deputy reads |
 |---------|------|--------------|
-| §2 Skill-first implement | `implementation_lead: deputy` | `executing-plans` → plan → TDD → `finishing-a-development-branch` |
+| §1 Skill-first plan review | Phase A | `executing-plans` Step 1 only → review table (no implement) |
+| §2 Skill-first implement | `implementation_lead: deputy` | `executing-plans` full → plan → TDD → `finishing-a-development-branch` |
 | §3 Skill-first acceptance | `implementation_lead: lead` | `verification-before-completion` → plan criteria → report template |
 | §4 Skill-first fix | Phase D | `systematic-debugging` → fix → re-verify |
 
@@ -68,7 +69,10 @@ Placeholder `{SKILLS_ROOT}` defaults to `.cursor/skills/superpowers`.
 2. **writing-plans** — Lead drafts [templates/plan-skeleton.md](templates/plan-skeleton.md) → `docs/plans/<feature>.md`
    - Include Superpowers 协作 table with bundle path
    - Bite-sized tasks + verification commands per task
-3. Standard Phase A: Deputy plan review → Lead 接纳建议 → User confirms
+3. MCP §1 Skill-first plan review to Deputy (`executing-plans` Step 1 only — critical review, **do not** use full `brainstorming` or `writing-plans` on Deputy side)
+4. Deputy outputs review table → Lead 接纳建议 → User confirms
+
+**Phase A Deputy must NOT:** run full `brainstorming` (Lead-only, requires User dialogue), run full `writing-plans` (Lead drafts plan), edit plan file, or proceed to Step 2 implementation.
 
 ## Phase B detail
 
@@ -114,6 +118,7 @@ Placeholder `{SKILLS_ROOT}` defaults to `.cursor/skills/superpowers`.
 ## Deputy TTY constraints
 
 - No subagents in typical TTY setup → **always** `executing-plans` for Deputy, never `subagent-driven-development`
+- Phase A: Deputy uses `executing-plans` **Step 1 only** — never full `brainstorming` or `writing-plans` (Lead-only)
 - Deputy must **read SKILL.md** at handoff path — `@plan.md` alone is insufficient
 - Deputy must **announce** skill name at start (per each SKILL.md)
 - Blocker → stop and ask User/Lead; do not force through
@@ -130,7 +135,7 @@ Placeholder `{SKILLS_ROOT}` defaults to `.cursor/skills/superpowers`.
 ## Announce pattern
 
 ```text
-[Superpowers Dual-Agent Collab] Phase A — Lead: writing-plans
+[Superpowers Dual-Agent Collab] Phase A — Lead: writing-plans; Deputy: executing-plans Step 1 review (bundle)
 [Superpowers Dual-Agent Collab] Phase B — Deputy: executing-plans (bundle) + activity watch
 [Superpowers Dual-Agent Collab] Phase B — Lead: requesting-code-review on Deputy diff
 [Superpowers Dual-Agent Collab] Phase C — Deputy: verification-before-completion (bundle)

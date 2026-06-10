@@ -10,7 +10,28 @@ When `superpowers_mode: off`, use §1–§3 **classic** variants (bottom). When 
 
 ---
 
-## 1. Plan review (unchanged — both modes)
+## 1. Plan review
+
+### Skill-first (`superpowers_mode: on`) — **default when on**
+
+Use in Phase A after Lead drafts plan.
+
+```text
+@{PLAN_PATH} 请做 Plan 审阅（只审不改，不进入实施）。严格按以下顺序：
+
+1) 读取 {SKILLS_ROOT}/executing-plans/SKILL.md，开头 announce 使用该 skill
+2) 仅执行其中 Step 1「Load and Review Plan」— 批判性审阅；不要进入 Step 2 实施
+3) 额外检查（对照 writing-plans 质量标准，只作审阅清单，不要重写 plan）：
+   - 任务粒度是否 bite-sized（每步 2–5 分钟级）
+   - 每个任务是否有 verification 命令
+   - 文件边界与仓库惯例（AGENTS.md、现有模块）是否清晰
+4) 输出表格：项 | 建议 | 严重程度（high/med/low）| 待 Lead 澄清（如有）
+5) 禁止：修改 plan 文件、问 User、invoke 其他 skill、开始写代码
+
+审阅完成后在终端回复摘要。有疑问写入「待 Lead 澄清」列，由 Lead 在接纳建议时处理。
+```
+
+### Classic (`superpowers_mode: off`)
 
 ```text
 @{PLAN_PATH} 请审阅本 plan，只审不改：

@@ -109,7 +109,7 @@ lead_handoff_fields:
 **Superpowers on (before step 1):** If no approved spec, Lead invokes `brainstorming` with User. Then invoke `writing-plans` discipline when drafting.
 
 1. Lead drafts plan from [templates/plan-skeleton.md](templates/plan-skeleton.md) or aligns existing `docs/plans/*.md` — include **Deputy 监测配置** and **Superpowers 协作** (intervals from Phase 0 or ask User now)
-2. MCP send **Plan review** variant from [templates/handoff-lead-to-deputy.md](templates/handoff-lead-to-deputy.md); **must press Enter to submit** (see MCP protocol)
+2. MCP send **Plan review** variant from [templates/handoff-lead-to-deputy.md](templates/handoff-lead-to-deputy.md) — Skill-first §1 when `superpowers_mode: on` (`executing-plans` Step 1 only); **must press Enter to submit** (see MCP protocol)
 3. Deputy **reviews only** — no plan edits; returns table: `项 | 建议 | 严重程度`
 4. Lead **second review**: fill plan section **审阅结论 / 接纳建议** — each Deputy item: **采纳 / 部分采纳 / 不采纳** + reason
 5. **User confirms** plan → then Phase B
@@ -210,6 +210,7 @@ If `terminal_bridge: manual`, Lead cannot poll terminal files — ask User at ea
 - Skipping **Superpowers 协作** ask when User invokes superpowers-dual-agent-collab
 - Enabling Superpowers (`on`) when User chose `off`, or skipping Deputy bundle / Skill-first handoffs when User chose `on`
 - Replacing Deputy plan review with Superpowers code-review only (Deputy review stays in Phase A)
+- Deputy running full `brainstorming` or `writing-plans` in Phase A (Lead-only; Deputy uses `executing-plans` Step 1 only)
 - Sending `@plan.md` alone to Deputy when `superpowers_mode: on` (must include SKILL.md read order)
 
 ## Templates

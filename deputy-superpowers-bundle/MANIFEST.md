@@ -36,7 +36,7 @@ Or copy this `deputy-superpowers-bundle/` folder's sync scripts from the skill r
 
 | Skill | Phase | Role | Why included |
 |-------|-------|------|--------------|
-| `executing-plans` | B — Implement | Deputy (or Lead in terminal) | Step-by-step plan execution with stop conditions |
+| `executing-plans` | A — Plan review (Step 1 only); B — Implement (full) | Deputy | Step 1: critical plan review; full flow: step-by-step execution |
 | `test-driven-development` | B — per task | Implementer | Code changes follow red-green-refactor |
 | `finishing-a-development-branch` | B — wrap-up | Implementer | **Required sub-skill** of executing-plans |
 | `verification-before-completion` | C — Acceptance | Acceptor (Deputy when `implementation_lead: lead`) | Evidence before pass claims |
@@ -57,7 +57,7 @@ Or copy this `deputy-superpowers-bundle/` folder's sync scripts from the skill r
 | Phase | `implementation_lead: lead` | `implementation_lead: deputy` |
 |-------|----------------------------|------------------------------|
 | A — Plan draft | Lead: `brainstorming` → `writing-plans` (plugin) | Same |
-| A — Plan review | Deputy: critique only (no skill file) | Same |
+| A — Plan review | Deputy: `executing-plans` Step 1 only (bundle) | Same |
 | B — Implement | Lead: `executing-plans` (plugin) + TDD | Deputy: read `executing-plans` → TDD → `finishing-a-development-branch` from **project bundle** |
 | B — Post-impl review | Deputy: `verification-before-completion` + acceptance-report | Lead: `requesting-code-review` (plugin) on Deputy diff |
 | C — Acceptance | Deputy: `verification-before-completion` (bundle) + report template | Lead: `verification-before-completion` (plugin) triage |

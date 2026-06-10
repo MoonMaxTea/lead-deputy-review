@@ -35,7 +35,7 @@ Lead 职责：每次 MCP 下发任务并**回车提交**后启动监测；每个
 | 阶段 | Superpowers skill | 执行方 | 来源 |
 |------|-------------------|--------|------|
 | Plan 起草 | brainstorming → writing-plans | Lead | 插件 |
-| Plan 审阅 | — | Deputy（不变） | — |
+| Plan 审阅 | — | Deputy：`executing-plans` Step 1（只审不改） | bundle |
 | 实施 (lead) | executing-plans / subagent-driven-development + TDD | Lead | 插件 |
 | 实施 (deputy) | executing-plans → TDD → finishing-a-development-branch | Deputy | 项目 bundle `{DEPUTY_SKILLS_ROOT}` |
 | 实施后审 diff | requesting-code-review | Lead | 插件 |
@@ -114,7 +114,10 @@ Deputy 报告中将以上标为 **待人工**。
 
 > `superpowers_mode: on` 时使用 [handoff-lead-to-deputy.md](../templates/handoff-lead-to-deputy.md) 的 **Skill-first** 版本（§2/§3/§4），不要只用下方经典版。
 
-### Plan 审阅版（两种模式相同）
+### Plan 审阅版
+
+> `superpowers_mode: on`：使用 handoff §1 Skill-first（`executing-plans` Step 1 only）。  
+> `superpowers_mode: off`：使用下方经典版。
 
 ```text
 @{PLAN_PATH} 请审阅本 plan，只审不改：
