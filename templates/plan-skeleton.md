@@ -32,16 +32,19 @@ Lead 职责：每次 MCP 下发任务并**回车提交**后启动监测；每个
 
 ### Superpowers 协作（`superpowers_mode: on` 时填写）
 
-| 阶段 | Superpowers skill | 执行方 |
-|------|-------------------|--------|
-| Plan 起草 | brainstorming → writing-plans | Lead |
-| Plan 审阅 | — | Deputy（不变） |
-| 实施 (lead) | executing-plans / subagent-driven-development | Lead |
-| 实施 (deputy) | requesting-code-review | Lead 审 diff |
-| 验收 | verification-before-completion | Lead 举证 |
-| 修复 | systematic-debugging | 实施方 |
+| 阶段 | Superpowers skill | 执行方 | 来源 |
+|------|-------------------|--------|------|
+| Plan 起草 | brainstorming → writing-plans | Lead | 插件 |
+| Plan 审阅 | — | Deputy（不变） | — |
+| 实施 (lead) | executing-plans / subagent-driven-development + TDD | Lead | 插件 |
+| 实施 (deputy) | executing-plans → TDD → finishing-a-development-branch | Deputy | 项目 bundle `{DEPUTY_SKILLS_ROOT}` |
+| 实施后审 diff | requesting-code-review | Lead | 插件 |
+| 验收 | verification-before-completion | Acceptor（Deputy 或 Lead） | Deputy 用 bundle，Lead 用插件 |
+| 修复 | systematic-debugging | 实施方 | bundle 或插件 |
 
-`off` 时删除本节或标 N/A。详见 [superpowers-integration.md](../superpowers-integration.md)。
+`{DEPUTY_SKILLS_ROOT}` 默认 `.cursor/skills/superpowers/`。Bootstrap: [deputy-superpowers-bundle/MANIFEST.md](../deputy-superpowers-bundle/MANIFEST.md)。
+
+Handoff 必须使用 Skill-first 模板（先读 SKILL.md 再读 plan）。详见 [superpowers-integration.md](../superpowers-integration.md)。
 
 ## 概述
 
@@ -109,7 +112,9 @@ Deputy 报告中将以上标为 **待人工**。
 
 ## Deputy 提示词（供 Lead MCP 发送）
 
-### Plan 审阅版
+> `superpowers_mode: on` 时使用 [handoff-lead-to-deputy.md](../templates/handoff-lead-to-deputy.md) 的 **Skill-first** 版本（§2/§3/§4），不要只用下方经典版。
+
+### Plan 审阅版（两种模式相同）
 
 ```text
 @{PLAN_PATH} 请审阅本 plan，只审不改：
@@ -119,7 +124,7 @@ Deputy 报告中将以上标为 **待人工**。
 输出表格：项 | 建议 | 严重程度。不要直接修改 plan 文件。
 ```
 
-### 验收版
+### 验收版（classic — superpowers_mode: off）
 
 ```text
 @{PLAN_PATH} Lead 已完成实施。请按「验收标准」和「测试环境配置」验收：

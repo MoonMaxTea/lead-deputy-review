@@ -16,6 +16,8 @@ One agent can move fast; two roles catch what one misses. This Skill defines a r
 
 - **Preflight** — verify terminal-bridge MCP before any handoff  
 - **Superpowers optional** — User chooses each session: overlay brainstorming / writing-plans / executing-plans / verification, or classic dual-agent flow only  
+- **Deputy skill bundle** — when Superpowers is on, sync project-local skills so Deputy (TTY CLI) follows the same protocol as Lead  
+- **Skill-first handoffs** — Lead sends MCP instructions that require reading `SKILL.md` before the plan, not plan path alone  
 - **Plan review** — Deputy critiques; Lead publishes adoption decisions; you confirm  
 - **Flexible implementation** — you choose Lead or Deputy as the primary coder  
 - **Acceptance** — static/HTTP checks in tables; UI steps flagged for manual testing  
@@ -41,6 +43,14 @@ Install a **terminal bridge** (recommended: [Terminal Automatization](https://ma
 
 Optional: [Superpowers](https://github.com/obra/superpowers) plugin in Cursor (`/plugin-add superpowers`).
 
+When Superpowers is **on**, bootstrap the Deputy bundle in each project:
+
+```powershell
+.\scripts\sync-deputy-superpowers-bundle.ps1 -ProjectRoot .
+```
+
+→ Full matrix: [deputy-superpowers-bundle/MANIFEST.md](deputy-superpowers-bundle/MANIFEST.md)
+
 → Full setup: [setup-reference.md](setup-reference.md)
 
 ## Install
@@ -55,14 +65,15 @@ git clone https://github.com/MoonMaxTea/superpowers-dual-agent-collab.git
 ## Quick start
 
 1. Install a terminal bridge; configure MCP **and** matching `terminalMcp.port` at the **same scope** (user or project). Example fixed port: `http://127.0.0.1:6070/mcp` + `"terminalMcp.port": 6070` — then reload window. See [setup-reference.md](setup-reference.md).
-2. Start your Deputy CLI in an integrated terminal (`start_command` of your choice).
-3. In a new agent chat:
+2. If Superpowers **on**: run `scripts/sync-deputy-superpowers-bundle.ps1` in your project repo.
+3. Start your Deputy CLI in an integrated terminal (`start_command` of your choice).
+4. In a new agent chat:
 
    ```text
    Use superpowers-dual-agent-collab skill. Run Preflight, then review docs/plans/my-feature.md
    ```
 
-4. Expect: Preflight report → **Superpowers on/off?** → questions (implementation lead + Deputy `start_command`) → phases A–C.
+5. Expect: Preflight report → **Superpowers on/off?** → questions (implementation lead + Deputy `start_command`) → phases A–C.
 
 ## Workflow
 
@@ -79,7 +90,12 @@ superpowers-dual-agent-collab/
 ├── README.md / README.zh-CN.md
 ├── SKILL.md                 # Agent instructions
 ├── setup-reference.md       # Bridge install & troubleshooting
-├── superpowers-integration.md  # Optional Superpowers overlay
+├── superpowers-integration.md  # Superpowers overlay + Deputy bundle
+├── deputy-superpowers-bundle/
+│   └── MANIFEST.md          # Bundle spec & phase×role matrix
+├── scripts/
+│   ├── sync-deputy-superpowers-bundle.ps1
+│   └── sync-deputy-superpowers-bundle.sh
 └── templates/
     ├── plan-skeleton.md
     ├── handoff-lead-to-deputy.md

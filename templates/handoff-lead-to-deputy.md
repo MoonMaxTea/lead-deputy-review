@@ -1,12 +1,16 @@
 # Lead → Deputy Handoff Templates
 
-Lead sends via terminal-bridge MCP (`focus_terminal` → `send_text_to_terminal` → **Enter submit**). **Always** use two-step send: message with `execute: false`, then `"\r"` with `execute: false`. Skipping Enter leaves text in the input buffer — Deputy never receives the task.
+Lead sends via terminal-bridge MCP (`focus_terminal` → `send_text_to_terminal` → **Enter submit**). **Always** two-step send: message with `execute: false`, then `"\r"` with `execute: false`.
 
-Placeholders: `{PLAN_PATH}` `{VERSION}` `{CHANGED_FILES}` `{CHECKLIST_REF}` `{IMPLEMENTATION_LEAD}` `{DEPUTY_NAME}`
+Placeholders: `{PLAN_PATH}` `{SKILLS_ROOT}` `{VERSION}` `{CHANGED_FILES}` `{CHECKLIST_REF}` `{IMPLEMENTATION_LEAD}` `{DEPUTY_NAME}` `{ISSUE_SUMMARY}`
+
+Default `{SKILLS_ROOT}` = `.cursor/skills/superpowers`
+
+When `superpowers_mode: off`, use §1–§3 **classic** variants (bottom). When `on`, use **Skill-first** variants.
 
 ---
 
-## 1. Plan review
+## 1. Plan review (unchanged — both modes)
 
 ```text
 @{PLAN_PATH} 请审阅本 plan，只审不改：
@@ -21,7 +25,26 @@ Placeholders: `{PLAN_PATH}` `{VERSION}` `{CHANGED_FILES}` `{CHECKLIST_REF}` `{IM
 
 ## 2. Deputy-led implementation
 
+### Skill-first (`superpowers_mode: on`) — **default when on**
+
 Use when `implementation_lead: deputy`.
+
+```text
+User 已确认 plan，implementation_lead=deputy。请严格按以下顺序执行，不要跳过：
+
+1) 读取 {SKILLS_ROOT}/executing-plans/SKILL.md，开头 announce 使用该 skill
+2) 读取 @{PLAN_PATH}，批判性审阅；有疑问先停下询问，不要猜测
+3) 按 executing-plans 逐步执行 plan 任务；每个涉及代码改动的任务先读 {SKILLS_ROOT}/test-driven-development/SKILL.md 并遵循
+4) 全部任务与 verification 通过后，读取 {SKILLS_ROOT}/finishing-a-development-branch/SKILL.md 并收尾
+5) 不要修改 plan 正文
+
+完成后按实施交接格式汇报：
+version_or_build_id、changed_files、run_url、build_steps、ready_for_acceptance: yes/no、notes
+
+Lead 将只读 review diff，不并行改同一模块。遇阻塞立即停止并说明。
+```
+
+### Classic (`superpowers_mode: off`)
 
 ```text
 @{PLAN_PATH} User 已确认 plan，implementation_lead=deputy。
@@ -36,7 +59,24 @@ Lead 将只读 review diff，不并行改同一模块。
 
 ## 3. Acceptance (Deputy accepts Lead's work)
 
+### Skill-first (`superpowers_mode: on`)
+
 Use when `implementation_lead: lead`.
+
+```text
+Lead 已完成实施。请严格按以下顺序验收：
+
+1) 读取 {SKILLS_ROOT}/verification-before-completion/SKILL.md，开头 announce 使用该 skill
+2) 读取 @{PLAN_PATH} 的「验收标准」与「测试环境配置」
+3) 运行 plan 中的 verification 命令（必须重新执行，不用旧结果）
+4) 输出验收报告，表格：项 | 结果 | 证据（文件行号或 curl 状态码）。中文。
+5) 浏览器/UI 项标「待人工」，附操作步骤
+
+version={VERSION}，改动文件参考：{CHANGED_FILES}
+报告结构见项目 acceptance-report 模板。结论须基于 fresh evidence。
+```
+
+### Classic (`superpowers_mode: off`)
 
 ```text
 @{PLAN_PATH} Lead 已完成实施。请按 plan「验收标准」和「测试环境配置」验收：
@@ -50,6 +90,23 @@ Use when `implementation_lead: lead`.
 
 ---
 
+## 4. Fix loop (Skill-first — `superpowers_mode: on`)
+
+Send to **implementer** (Deputy or Lead terminal) when acceptance or review found issues.
+
+```text
+验收/审阅发现问题，请修复。严格按以下顺序：
+
+1) 读取 {SKILLS_ROOT}/systematic-debugging/SKILL.md，开头 announce 使用该 skill
+2) 读取 @{PLAN_PATH} 相关章节与以下问题摘要：
+{ISSUE_SUMMARY}
+3) 先定位根因再改代码；不要猜测性修补
+4) 修复后重新运行 plan 中的 verification 命令
+5) 汇报：根因、修改文件、verification 证据、ready_for_re_acceptance: yes/no
+```
+
+---
+
 ## Manual mode (no MCP bridge)
 
 When `terminal_bridge: manual`, Lead prints the same text in chat:
@@ -57,5 +114,5 @@ When `terminal_bridge: manual`, Lead prints the same text in chat:
 ```text
 请将以下内容粘贴到 {DEPUTY_NAME} 终端并回车：
 
-<paste variant 1/2/3 above>
+<paste variant above>
 ```

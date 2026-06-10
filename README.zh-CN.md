@@ -11,7 +11,9 @@
 单 Agent 快，但容易漏风险、缺二审。本 Skill 定义可复用的 **Lead + Deputy 双 Agent 协作**流程：
 
 - **Preflight** — 派活前先检查终端桥接 MCP  
-- **Superpowers 可选** — 每次会话询问是否启用；`on` 叠加 brainstorming / writing-plans 等流程，`off` 走经典双 Agent 流程  
+- **Superpowers 可选** — 每次会话询问是否启用；`on` 时 Lead 用插件、Deputy 读项目 bundle，Skill-first handoff；`off` 走经典双 Agent 流程  
+- **Deputy 技能包** — Superpowers 开启时，同步项目内 `.cursor/skills/superpowers/`，让副手与 Lead 遵循同一协议  
+- **Skill-first 下发** — Lead 通过 MCP 要求 Deputy 先读 SKILL.md 再执行 plan，而非只发 plan 路径  
 - **Plan 审阅** — Deputy 只审不改；Lead 写接纳建议；你确认  
 - **实施分工可选** — 由你指定 Lead 或 Deputy 主改代码  
 - **验收** — 静态/HTTP 表格报告；UI 项标「待人工」  
@@ -37,6 +39,14 @@
 
 可选：Cursor 安装 [Superpowers](https://github.com/obra/superpowers) 插件（`/plugin-add superpowers`）。
 
+Superpowers **开启**时，在每个项目仓库 bootstrap Deputy 技能包：
+
+```powershell
+.\scripts\sync-deputy-superpowers-bundle.ps1 -ProjectRoot .
+```
+
+→ 矩阵说明：[deputy-superpowers-bundle/MANIFEST.md](deputy-superpowers-bundle/MANIFEST.md)
+
 → 详见 [setup-reference.md](setup-reference.md)
 
 ## 安装
@@ -51,14 +61,15 @@ git clone https://github.com/MoonMaxTea/superpowers-dual-agent-collab.git
 ## 快速开始
 
 1. 安装终端桥接，在**同一作用域**（用户级或项目级）同时配置 MCP URL 与 `terminalMcp.port`。示例固定端口：`http://127.0.0.1:6070/mcp` + `"terminalMcp.port": 6070`，然后重载窗口。详见 [setup-reference.md](setup-reference.md)。
-2. 在内置终端启动 Deputy CLI（你的 `start_command`）。
-3. 在新对话中说：
+2. 若 Superpowers **on**：在项目根运行 `scripts/sync-deputy-superpowers-bundle.ps1`。
+3. 在内置终端启动 Deputy CLI（你的 `start_command`）。
+4. 在新对话中说：
 
    ```text
    使用 superpowers-dual-agent-collab skill，先 Preflight，再审阅 docs/plans/某功能.md
    ```
 
-4. 流程：Preflight 汇报 → **是否启用 Superpowers？** → 询问实施主与副手 → 阶段 A–C。
+5. 流程：Preflight 汇报 → **是否启用 Superpowers？** → 询问实施主与副手 → 阶段 A–C。
 
 ## 流程
 
@@ -76,6 +87,11 @@ superpowers-dual-agent-collab/
 ├── SKILL.md
 ├── setup-reference.md
 ├── superpowers-integration.md
+├── deputy-superpowers-bundle/
+│   └── MANIFEST.md
+├── scripts/
+│   ├── sync-deputy-superpowers-bundle.ps1
+│   └── sync-deputy-superpowers-bundle.sh
 └── templates/
 ```
 

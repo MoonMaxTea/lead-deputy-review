@@ -27,8 +27,9 @@ Before plan work or MCP dispatch, Lead must self-check and report to User.
 | Host extension running | MCP tools return non-error; status bar shows bridge (if applicable) | Reload window; restart MCP server |
 | Deputy terminal ready | Target session visible in `list_terminals`, or User will start `start_command` | Ask User to start Deputy CLI in integrated terminal |
 | Lead runtime shape | Current session is **dialogue Agent**, not the terminal CLI being typed into | If only terminal CLI mode, ask User to load this Skill from app dialogue Agent as Lead |
+| Deputy Superpowers bundle | When `superpowers_mode: on`: `.cursor/skills/superpowers/` exists with all 5 bundled SKILL.md files | Run [scripts/sync-deputy-superpowers-bundle.ps1](scripts/sync-deputy-superpowers-bundle.ps1); see [deputy-superpowers-bundle/MANIFEST.md](deputy-superpowers-bundle/MANIFEST.md) |
 
-Record: `terminal_bridge: ok | missing | degraded` + provider name.
+Record: `terminal_bridge: ok | missing | degraded` + provider name. When superpowers on, also record: `deputy_skills_bundle: ok | missing`.
 
 **Equivalent bridges** (any that list terminals + send text to integrated terminals):
 
@@ -46,8 +47,9 @@ Full install, dual-role (dialogue vs terminal CLI) notes, and fallbacks: [setup-
 Ask User (use AskQuestion when available):
 
 1. **Superpowers 协作** (ask **every session** when User invokes this skill): `on` | `off`
-   - Explain briefly: `on` = Lead 叠加 Superpowers 流程技能（brainstorming / writing-plans / executing-plans / verification 等）；`off` = 仅本 Skill 原流程，不调用 Superpowers
+   - Explain briefly: `on` = Lead 用 Superpowers 插件技能；Deputy 读项目内 `.cursor/skills/superpowers/` 同名协议；handoff 为 Skill-first（先读 SKILL.md 再执行 plan）；`off` = 经典双 Agent 流程
    - If User already stated preference this message, still confirm unless they said "always on/off for this project"
+   - If `on` and bundle missing: offer to run sync script before Phase B
 2. **Implementation lead**: `lead` (default) | `deputy`
 3. **Deputy identity**: display name + `start_command` (User's chosen CLI entrypoint)
 4. **Deputy activity watch** (ask again during Phase A plan draft if not set): which check intervals to use while Deputy is working — default preset `1m, 5m, 10m, 30m`; User may pick a subset or custom intervals
@@ -75,6 +77,9 @@ terminal_bridge:
   status: ok              # ok | missing | degraded | manual
   provider: terminal-automatization
   mcp_endpoint: "http://127.0.0.1:6070/mcp"   # example; must match terminalMcp.port at same scope
+deputy_skills:
+  root: .cursor/skills/superpowers   # project bundle for Deputy (superpowers_mode: on)
+  status: ok              # ok | missing
 deputy:
   name: "{DEPUTY_NAME}"
   start_command: "{START_COMMAND}"
@@ -111,29 +116,29 @@ lead_handoff_fields:
 
 ### Phase B — Implementation
 
-**Superpowers on:** `implementation_lead: lead` → `executing-plans` or `subagent-driven-development` + `test-driven-development` per task. `implementation_lead: deputy` → Lead uses `requesting-code-review` on Deputy diff after handoff complete.
+**Superpowers on:** `implementation_lead: lead` → Lead uses plugin `executing-plans`. `implementation_lead: deputy` → MCP **§2 Skill-first implement** handoff; Deputy reads bundle skills; Lead activity watch + `requesting-code-review` on diff before Phase C.
 
 | `implementation_lead` | Implementer | Other party |
 |-----------------------|---------------|-------------|
 | `lead` (default) | Lead edits code | Deputy standby or read-only checks |
-| `deputy` | MCP **Deputy implement** handoff | Lead reviews diff only; no parallel edits |
+| `deputy` | MCP **Deputy implement** handoff (Skill-first when superpowers on) | Lead reviews diff only; no parallel edits |
 
 Implementer completes handoff fields: `version_or_build_id`, `changed_files`, `run_url`, build/restart steps.
 
 ### Phase C — Acceptance
 
-**Superpowers on:** Before any pass/complete claim, Lead invokes `verification-before-completion` (fresh command evidence). Deputy acceptance report still required when Deputy is acceptor.
+**Superpowers on:** Before any pass claim, acceptor runs `verification-before-completion` (Deputy reads bundle when acceptor; Lead uses plugin). Deputy acceptance report still required when Deputy is acceptor.
 
 | `implementation_lead` | Acceptor | Output |
 |-----------------------|----------|--------|
-| `lead` | Deputy | [templates/acceptance-report.md](templates/acceptance-report.md) via MCP |
+| `lead` | Deputy | Skill-first §3 acceptance handoff → bundle `verification-before-completion` → [templates/acceptance-report.md](templates/acceptance-report.md) |
 | `deputy` | Lead | Static review + fix list to Deputy terminal or plan |
 
 Browser/UI items: always **待人工** with steps for User.
 
 ### Phase D — Fix loop
 
-**Superpowers on:** Invoke `systematic-debugging` before proposing fixes.
+**Superpowers on:** Implementer reads bundle/plugin `systematic-debugging` before fixes. Lead sends **§4 Skill-first fix** handoff when implementer is Deputy.
 
 Acceptance findings → implementer fixes → update handoff → optional re-acceptance. Lead records rejected suggestions in plan with rationale.
 
@@ -203,8 +208,9 @@ If `terminal_bridge: manual`, Lead cannot poll terminal files — ask User at ea
 - Sending handoff text without **Enter/submit** (`\r` second step)
 - Dispatching to Deputy then going idle without **activity watch**
 - Skipping **Superpowers 协作** ask when User invokes superpowers-dual-agent-collab
-- Enabling Superpowers (`on`) when User chose `off`, or skipping Superpowers when User chose `on`
+- Enabling Superpowers (`on`) when User chose `off`, or skipping Deputy bundle / Skill-first handoffs when User chose `on`
 - Replacing Deputy plan review with Superpowers code-review only (Deputy review stays in Phase A)
+- Sending `@plan.md` alone to Deputy when `superpowers_mode: on` (must include SKILL.md read order)
 
 ## Templates
 

@@ -1,73 +1,138 @@
 # Superpowers Integration (optional)
 
-When `superpowers_mode: on`, Lead **layers** Superpowers process skills onto the Lead + Deputy workflow. Deputy handoffs, Enter submit, and activity watch **still apply**. When `superpowers_mode: off`, ignore this file entirely.
+When `superpowers_mode: on`, Lead and Deputy follow **the same Superpowers protocol** — not just shared vocabulary.
+
+- **Lead** invokes skills from the Superpowers **plugin** (dialogue Agent).
+- **Deputy** reads skills from the **project bundle** at `.cursor/skills/superpowers/` (TTY CLI).
+
+Deputy handoffs must be **Skill-first** (read `SKILL.md` before plan). Enter submit and activity watch **still apply**. When `superpowers_mode: off`, ignore this file.
 
 ## Prerequisites
 
-- Superpowers plugin installed in Cursor (`/plugin-add superpowers`)
-- Lead can invoke Superpowers skills from the plugin (e.g. `brainstorming`, `writing-plans`)
+| Prerequisite | Who | Action |
+|--------------|-----|--------|
+| Superpowers plugin | Lead | `/plugin-add superpowers` in Cursor |
+| Deputy skill bundle | Project | Run [scripts/sync-deputy-superpowers-bundle.ps1](scripts/sync-deputy-superpowers-bundle.ps1) or `.sh` → creates `.cursor/skills/superpowers/` |
+| Plan with verification commands | Lead | Per `writing-plans` discipline in plan skeleton |
+| Terminal bridge | Lead | See [setup-reference.md](setup-reference.md) |
 
-## Phase mapping
+Bundle manifest and role matrix: [deputy-superpowers-bundle/MANIFEST.md](deputy-superpowers-bundle/MANIFEST.md).
 
-| Dual-agent collab phase | Superpowers skill(s) | Who runs | Notes |
-|-------------------|----------------------|----------|-------|
-| A — Plan (draft) | `brainstorming` → `writing-plans` | Lead | Skip brainstorming if User already has an approved spec/plan path |
-| A — Plan (review) | *(none)* | Deputy | Unchanged: Deputy critiques; Lead writes 接纳建议 |
-| B — Implement (`lead`) | `executing-plans` or `subagent-driven-development`; per-task `test-driven-development` | Lead | Prefer `subagent-driven-development` when Task/subagents available |
-| B — Implement (`deputy`) | `requesting-code-review` on Deputy's diff | Lead (review only) | Lead does not parallel-edit |
-| C — Acceptance | `verification-before-completion` | Lead (if acceptor) or Lead triage | Deputy still fills acceptance-report when acceptor |
-| D — Fix loop | `systematic-debugging` | Implementer | Root cause before fix; then re-accept |
+## Preflight (when `superpowers_mode: on`)
 
-## Phase A detail (superpowers on)
+Lead adds to standard Preflight:
 
-1. **brainstorming** (if greenfield or no approved spec):
-   - Explore context, clarify with User, propose approaches, get design approval
-   - Optional design doc: `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
-2. **writing-plans** — draft plan using [templates/plan-skeleton.md](templates/plan-skeleton.md)
-   - Save to `docs/plans/<feature>.md` (this skill's canonical path; superpowers default `docs/superpowers/plans/` overridden here)
-   - Include bite-sized tasks, file list, verification commands per writing-plans discipline
-3. Continue standard Phase A: MCP Deputy plan review → Lead 接纳建议 → User confirms
+```
+Deputy Superpowers Bundle:
+- [ ] .cursor/skills/superpowers/MANIFEST.md exists
+- [ ] All 5 skills present (executing-plans, test-driven-development, finishing-a-development-branch, verification-before-completion, systematic-debugging)
+- [ ] Plan tasks include verification commands
+```
 
-## Phase B detail (superpowers on)
+If bundle missing: run sync script or ask User to bootstrap before Phase B.
+
+## Phase × Role × Skill matrix
+
+| Phase | `implementation_lead: lead` | `implementation_lead: deputy` |
+|-------|----------------------------|------------------------------|
+| **A — Plan draft** | Lead: `brainstorming` → `writing-plans` (plugin) | Same |
+| **A — Plan review** | Deputy: critique only (no skill file) | Same |
+| **B — Implement** | Lead: `executing-plans` or `subagent-driven-development` (plugin) + per-task `test-driven-development` | Deputy: **bundle** `executing-plans` → TDD → `finishing-a-development-branch` |
+| **B — Post-impl review** | Deputy accepts next (Phase C) | Lead: `requesting-code-review` (plugin) on Deputy diff — **Lead only, not Deputy** |
+| **C — Acceptance** | Deputy: **bundle** `verification-before-completion` + [acceptance-report](templates/acceptance-report.md) | Lead: `verification-before-completion` (plugin) triage + User summary |
+| **D — Fix loop** | Implementer: `systematic-debugging` (bundle if Deputy, plugin if Lead) | Same |
+
+### Lead-only plugin skills (never copy to Deputy bundle)
+
+`brainstorming`, `writing-plans`, `subagent-driven-development`, `requesting-code-review`, `receiving-code-review`
+
+### Deputy bundle skills (project-local)
+
+`executing-plans`, `test-driven-development`, `finishing-a-development-branch`, `verification-before-completion`, `systematic-debugging`
+
+## Skill-first MCP handoffs
+
+Lead **must not** send plan path alone when `superpowers_mode: on`. Use templates in [templates/handoff-lead-to-deputy.md](templates/handoff-lead-to-deputy.md):
+
+| Variant | When | Deputy reads |
+|---------|------|--------------|
+| §2 Skill-first implement | `implementation_lead: deputy` | `executing-plans` → plan → TDD → `finishing-a-development-branch` |
+| §3 Skill-first acceptance | `implementation_lead: lead` | `verification-before-completion` → plan criteria → report template |
+| §4 Skill-first fix | Phase D | `systematic-debugging` → fix → re-verify |
+
+Placeholder `{SKILLS_ROOT}` defaults to `.cursor/skills/superpowers`.
+
+## Phase A detail
+
+1. **brainstorming** (if greenfield or no approved spec) — Lead only
+2. **writing-plans** — Lead drafts [templates/plan-skeleton.md](templates/plan-skeleton.md) → `docs/plans/<feature>.md`
+   - Include Superpowers 协作 table with bundle path
+   - Bite-sized tasks + verification commands per task
+3. Standard Phase A: Deputy plan review → Lead 接纳建议 → User confirms
+
+## Phase B detail
 
 ### `implementation_lead: lead`
 
-1. Announce: using `executing-plans` (or `subagent-driven-development`)
-2. TodoWrite from plan tasks; TDD per step when applicable
-3. `finishing-a-development-branch` before handoff to Deputy acceptance
+1. Lead announces: `executing-plans` (or `subagent-driven-development` if subagents available)
+2. TodoWrite from plan; `test-driven-development` per code-changing task
+3. `finishing-a-development-branch` before Deputy acceptance handoff
+4. MCP §3 Skill-first acceptance to Deputy
 
 ### `implementation_lead: deputy`
 
-1. MCP Deputy implement handoff (unchanged)
-2. Lead activity watch during Deputy work
-3. When Deputy reports done: Lead invokes `requesting-code-review` (or read diff + checklist) before Phase C
+1. MCP §2 Skill-first implement to Deputy
+2. Lead **activity watch** during Deputy work (mandatory — Deputy has no subagents)
+3. When Deputy reports `ready_for_acceptance: yes`:
+   - Lead invokes **`requesting-code-review`** (plugin) on Deputy diff
+   - Lead does **not** parallel-edit
+4. Proceed to Phase C only after review pass or fix list dispatched
 
-## Phase C detail (superpowers on)
+## Phase C detail
 
-1. Acceptor runs checks (Deputy or Lead per `implementation_lead`)
-2. **Before any "pass" claim**: Lead invokes `verification-before-completion` — run fresh commands, cite evidence
-3. Merge Deputy acceptance report with verification evidence in User summary
+### Deputy as acceptor (`implementation_lead: lead`)
 
-## Phase D detail (superpowers on)
+1. Deputy received §3 Skill-first acceptance handoff
+2. Deputy runs `verification-before-completion` from bundle — **fresh commands, cite evidence**
+3. Output per [handoff-deputy-to-lead.md](templates/handoff-deputy-to-lead.md) acceptance report
+4. Lead triages; User handles 待人工 UI items
 
-1. On failures/bugs: invoke `systematic-debugging` before proposing fixes
-2. Implementer fixes → update handoff → optional `verification-before-completion` + re-acceptance
+### Lead as acceptor (`implementation_lead: deputy`)
 
-## What does NOT change (superpowers on)
+1. Lead runs `verification-before-completion` (plugin)
+2. Lead merges evidence with Deputy's implementation handoff
+3. Report to User with fix list if needed
 
-- Preflight terminal-bridge checks
+**Before any "pass" claim** — verification skill is mandatory, not optional.
+
+## Phase D detail
+
+1. Implementer reads `systematic-debugging` (bundle or plugin by role)
+2. Root cause before fix — no speculative patches
+3. Fix → update handoff → optional re-acceptance with `verification-before-completion`
+
+## Deputy TTY constraints
+
+- No subagents in typical TTY setup → **always** `executing-plans` for Deputy, never `subagent-driven-development`
+- Deputy must **read SKILL.md** at handoff path — `@plan.md` alone is insufficient
+- Deputy must **announce** skill name at start (per each SKILL.md)
+- Blocker → stop and ask User/Lead; do not force through
+
+## What does NOT change
+
+- Preflight terminal-bridge + port scope checks
 - Mandatory Enter (`\r`) after MCP handoffs
 - Deputy activity watch intervals
 - `plan_author: lead` fixed
 - User confirms plan before Phase B
-- Browser/UI items → 待人工
+- Browser/UI → 待人工
 
 ## Announce pattern
 
-When superpowers on, Lead announces at phase start:
-
 ```text
-[Superpowers Dual-Agent Collab] Phase A — using writing-plans to draft plan
-[Superpowers Dual-Agent Collab] Phase B — using executing-plans (implementation_lead: lead)
-[Superpowers Dual-Agent Collab] Phase C — verification-before-completion before sign-off
+[Superpowers Dual-Agent Collab] Phase A — Lead: writing-plans
+[Superpowers Dual-Agent Collab] Phase B — Deputy: executing-plans (bundle) + activity watch
+[Superpowers Dual-Agent Collab] Phase B — Lead: requesting-code-review on Deputy diff
+[Superpowers Dual-Agent Collab] Phase C — Deputy: verification-before-completion (bundle)
+[Superpowers Dual-Agent Collab] Phase D — systematic-debugging
 ```

@@ -23,6 +23,8 @@ Lead must map each row to **采纳 / 部分采纳 / 不采纳** in plan before U
 
 ## Acceptance report (Phase C)
 
+Follow `{SKILLS_ROOT}/verification-before-completion/SKILL.md` — run **fresh** verification commands; cite evidence.
+
 Use [acceptance-report.md](acceptance-report.md) structure. Minimum:
 
 ```markdown
@@ -57,6 +59,8 @@ implementation_lead: {lead|deputy}
 ---
 
 ## Implementation complete (Deputy as implementer)
+
+Follow `{SKILLS_ROOT}/executing-plans/SKILL.md` and `{SKILLS_ROOT}/finishing-a-development-branch/SKILL.md` before reporting.
 
 ```markdown
 ## 实施交接 — {FEATURE_TITLE}

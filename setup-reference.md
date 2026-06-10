@@ -19,9 +19,53 @@ Report to User:
 
 ```text
 terminal_bridge: ok | missing | degraded | manual
+deputy_skills_bundle: ok | missing | n/a
 provider: <name>
 deputy_terminal: <name or pending>
 ```
+
+## Deputy Superpowers bundle (`superpowers_mode: on`)
+
+Deputy (TTY CLI) cannot use the Superpowers plugin. Copy a **project-local skill bundle** so Lead and Deputy follow the same protocol.
+
+### Bootstrap (once per repo)
+
+From skill repo scripts, run against your project root:
+
+```powershell
+# Windows — adjust path to cloned skill repo
+.\scripts\sync-deputy-superpowers-bundle.ps1 -ProjectRoot C:\path\to\your-repo
+```
+
+```bash
+./scripts/sync-deputy-superpowers-bundle.sh /path/to/your-repo
+```
+
+Creates `.cursor/skills/superpowers/` with 5 skills + MANIFEST.md.
+
+### Bundled skills
+
+| Skill | Purpose |
+|-------|---------|
+| executing-plans | Deputy implements plan step-by-step |
+| test-driven-development | Per-task code changes |
+| finishing-a-development-branch | Required wrap-up after executing-plans |
+| verification-before-completion | Deputy acceptance with fresh evidence |
+| systematic-debugging | Fix loop root-cause analysis |
+
+Full matrix: [deputy-superpowers-bundle/MANIFEST.md](deputy-superpowers-bundle/MANIFEST.md).
+
+### Preflight add-on (superpowers on)
+
+```
+Deputy Superpowers Bundle Preflight:
+- [ ] .cursor/skills/superpowers/MANIFEST.md exists
+- [ ] All 5 skill folders contain SKILL.md
+- [ ] Plan includes per-task verification commands
+- [ ] Lead will use Skill-first handoff (not @plan.md alone)
+```
+
+Re-run sync script when Superpowers plugin updates.
 
 ## Equivalent providers
 
