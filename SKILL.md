@@ -23,6 +23,7 @@ Before plan work or MCP dispatch, Lead must self-check and report to User.
 | Check | Pass | Fail action |
 |-------|------|-------------|
 | Terminal-bridge MCP | `list_terminals` + `send_text_to_terminal` (or equivalent) available and callable | See [setup-reference.md](setup-reference.md); install Terminal Automatization or equivalent |
+| Port & scope aligned | mcp.json URL port = `terminalMcp.port` = status bar port; user-level mcp.json paired with user settings (not project-only) | Fix scope mismatch per [setup-reference.md](setup-reference.md); reload window |
 | Host extension running | MCP tools return non-error; status bar shows bridge (if applicable) | Reload window; restart MCP server |
 | Deputy terminal ready | Target session visible in `list_terminals`, or User will start `start_command` | Ask User to start Deputy CLI in integrated terminal |
 | Lead runtime shape | Current session is **dialogue Agent**, not the terminal CLI being typed into | If only terminal CLI mode, ask User to load this Skill from app dialogue Agent as Lead |
@@ -73,7 +74,7 @@ lead:
 terminal_bridge:
   status: ok              # ok | missing | degraded | manual
   provider: terminal-automatization
-  mcp_endpoint: "http://127.0.0.1:6070/mcp"
+  mcp_endpoint: "http://127.0.0.1:6070/mcp"   # example; must match terminalMcp.port at same scope
 deputy:
   name: "{DEPUTY_NAME}"
   start_command: "{START_COMMAND}"

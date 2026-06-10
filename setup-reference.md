@@ -9,6 +9,8 @@ Terminal Bridge Preflight:
 - [ ] MCP client has terminal-bridge tools (list + send)
 - [ ] Test call: list_terminals succeeds
 - [ ] Provider extension running (or degraded PTY MCP noted)
+- [ ] Port aligned: mcp.json URL port = terminalMcp.port = status bar port
+- [ ] Config scope aligned: user-level mcp.json ↔ user settings; project mcp.json ↔ .vscode/settings.json
 - [ ] Deputy terminal visible OR User will start start_command
 - [ ] Lead is dialogue Agent (not the terminal CLI session under test)
 ```
@@ -43,7 +45,20 @@ deputy_terminal: <name or pending>
 
 ### Configure MCP (HTTP)
 
-Add to your **host MCP configuration** (project or user level — see your editor/agent documentation):
+**6070 is an example fixed port**, not magic — any free port works if both sides match.
+
+#### Option A — Fixed port (recommended for global setup)
+
+Configure **both** MCP client URL and extension port at the **same scope**:
+
+| Scope | MCP config file | Editor settings file |
+|-------|-----------------|----------------------|
+| User (all projects) | `~/.cursor/mcp.json` (Cursor) | User Settings (`settings.json`) |
+| Project | `.vscode/mcp.json` | `.vscode/settings.json` |
+
+**User-level example (Cursor):**
+
+`~/.cursor/mcp.json`:
 
 ```json
 {
@@ -55,16 +70,30 @@ Add to your **host MCP configuration** (project or user level — see your edito
 }
 ```
 
-Optional editor settings for fixed port and shell integration:
+User Settings (same scope — **required when using a fixed port in mcp.json**):
 
 ```json
 {
   "terminalMcp.port": 6070,
+  "terminalMcp.enableHttpServer": true,
   "terminal.integrated.shellIntegration.enabled": true
 }
 ```
 
-Use port `0` for auto-pick; then read status bar and sync the URL in mcp.json.
+**Project-level example:**
+
+`.vscode/mcp.json` and `.vscode/settings.json` with the same port values.
+
+After editing settings, **reload the window** (`Developer: Reload Window`) — the extension reads the port only at startup.
+
+#### Option B — Auto port (`terminalMcp.port: 0`)
+
+Let the OS assign a port; read the status bar (`MCP :<port>`), then sync that port into your mcp.json URL. Re-sync whenever the port changes.
+
+#### Common misconfiguration
+
+- User-level `~/.cursor/mcp.json` points to `6070`, but `terminalMcp.port` is set only in one project's `.vscode/settings.json` → other projects get `ECONNREFUSED 127.0.0.1:6070`.
+- Fix: move `terminalMcp.port` to user settings, or use project-scoped mcp.json in each repo.
 
 ### Common tools
 
@@ -138,7 +167,9 @@ When User will not install a bridge yet:
 | Symptom | Fix |
 |---------|-----|
 | MCP not connected | Reload window; restart Terminal MCP server |
-| Wrong port | Match `terminalMcp.port` with mcp.json URL |
+| `ECONNREFUSED 127.0.0.1:6070` | Extension not listening on that port — set `terminalMcp.port` at the **same scope** as mcp.json, reload window |
+| Wrong port | Match `terminalMcp.port` with mcp.json URL **and** status bar |
+| Works in one project only | User-level mcp.json + project-only `.vscode/settings.json` — promote port settings to user scope |
 | Deputy silent | `focus_terminal` first; **mandatory two-step Enter (`\r`)**; shorten message |
 | Message stuck in input, not sent | Lead forgot Step 2 Enter — resend with `\r` submit |
 | Lead idle, Deputy still working | Enable **Deputy activity watch** at 1/5/10/30m intervals |

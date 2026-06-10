@@ -50,7 +50,7 @@ git clone https://github.com/MoonMaxTea/superpowers-dual-agent-collab.git
 
 ## 快速开始
 
-1. 安装终端桥接，配置 MCP（如 `http://127.0.0.1:6070/mcp`）。
+1. 安装终端桥接，在**同一作用域**（用户级或项目级）同时配置 MCP URL 与 `terminalMcp.port`。示例固定端口：`http://127.0.0.1:6070/mcp` + `"terminalMcp.port": 6070`，然后重载窗口。详见 [setup-reference.md](setup-reference.md)。
 2. 在内置终端启动 Deputy CLI（你的 `start_command`）。
 3. 在新对话中说：
 

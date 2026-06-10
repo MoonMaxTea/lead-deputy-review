@@ -54,7 +54,7 @@ git clone https://github.com/MoonMaxTea/superpowers-dual-agent-collab.git
 
 ## Quick start
 
-1. Install a terminal bridge; configure MCP (HTTP URL, e.g. `http://127.0.0.1:6070/mcp`).
+1. Install a terminal bridge; configure MCP **and** matching `terminalMcp.port` at the **same scope** (user or project). Example fixed port: `http://127.0.0.1:6070/mcp` + `"terminalMcp.port": 6070` — then reload window. See [setup-reference.md](setup-reference.md).
 2. Start your Deputy CLI in an integrated terminal (`start_command` of your choice).
 3. In a new agent chat:
 
